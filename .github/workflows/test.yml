@@ -1,4 +1,4 @@
-name: Run React Tests
+name: Run Tests
 
 on:
   push:
@@ -20,7 +20,9 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install --save-dev @babel/preset-react @babel/preset-env babel-jest identity-obj-proxy
 
       - name: Run tests
-        run: npm test -- --watchAll=false
+        run: npm run test:ci
