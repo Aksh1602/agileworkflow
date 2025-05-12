@@ -2,7 +2,10 @@
   "name": "food-del",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "jest",
+    "test:ci": "jest --ci --watchAll=false --coverage"
+  },
   "author": "",
   "license": "ISC",
   "description": "",
