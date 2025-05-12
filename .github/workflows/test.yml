@@ -23,9 +23,44 @@ jobs:
       - name: Install dependencies
         run: |
           npm install
-          npm install axios react-router-dom
+          npm install axios react-router-dom react-toastify
           npm install --save-dev @babel/preset-react @babel/preset-env babel-jest identity-obj-proxy jest-environment-jsdom
+          npm install --save-dev @babel/plugin-transform-modules-commonjs
           npm cache clean --force
+
+      - name: Create required config files
+        run: |
+          echo 'module.exports = {
+            presets: [
+              "@babel/preset-env",
+              ["@babel/preset-react", { "runtime": "automatic" }]
+            ],
+            plugins: ["@babel/plugin-transform-modules-commonjs"]
+          };' > babel.config.js
+          
+          echo 'module.exports = {
+            testEnvironment: "jsdom",
+            setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+            transform: {
+              "^.+\\.(js|jsx)$": "babel-jest",
+              "^.+\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/fileTransformer.js"
+            },
+            moduleNameMapper: {
+              "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+              "^@/(.*)$": "<rootDir>/admin/src/$1"
+            },
+            transformIgnorePatterns: [
+              "/node_modules/(?!react-toastify)"
+            ]
+          };' > jest.config.js
+          
+          echo 'module.exports = {
+            process() {
+              return { code: "module.exports = {};" };
+            }
+          };' > fileTransformer.js
+          
+          echo 'import "@testing-library/jest-dom";' > jest.setup.js
 
       - name: Run tests
         run: |
